@@ -1,0 +1,37 @@
+# Dataset — too large for GitHub (20K images, 81 MB)
+dataset/
+
+# Python environment
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Large model files (>50 MB) — use releases or Git LFS if needed
+*.keras
+efficientnet_emotion_best.keras
+
+# Raw TF training log (ANSI escape codes, not useful in repo)
+training_log.txt
+
+# TensorBoard logs
+tb_logs/
+
+# Old plots superseded by the new ones
+emotion_confusion_matrix.png
+training_curves.png
+
+# Editor swap / temp files
+*.swp
+*.swo
+
+# Extra virtual envs
+venv/
+venv2/
+
+# Claude internal
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
