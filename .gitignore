@@ -29,8 +29,14 @@ training_curves.png
 venv/
 venv2/
 
-# Notebooks with embedded secrets / unrelated experiments
+# Unrelated experiments and legacy scripts
 fine_tune_gemma_4_E2B_on_emotions_final.ipynb
+baby_emotion_detector_2_.ipynb
+Detect_Emotion_test_.ipynb
+improved_emotion_model.py
+optimized_emotion_model.py
+resnet50_emotion.py
+run_training.sh
 
 # Claude internal
 .claude/
