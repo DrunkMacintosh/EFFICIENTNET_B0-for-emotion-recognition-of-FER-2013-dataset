@@ -10,7 +10,7 @@ import os
 import matplotlib.pyplot as plt
 
 HISTORY_FILE = os.path.join(os.path.dirname(__file__), "training_history.json")
-OUTPUT_FILE  = os.path.join(os.path.dirname(__file__), "training_curves_resnet50.png")
+OUTPUT_FILE  = os.path.join(os.path.dirname(__file__), "training_curves_efficientnet_b0.png")
 
 # ── Load ──────────────────────────────────────────────────────────────────────
 if not os.path.exists(HISTORY_FILE):

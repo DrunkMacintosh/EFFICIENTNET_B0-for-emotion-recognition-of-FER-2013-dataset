@@ -1,7 +1,7 @@
 # ResNet-50 / EfficientNet-B0 — Emotion Recognition on FER-2013
 
 Emotion classifier trained on the [FER-2013](https://www.kaggle.com/datasets/msambare/fer2013) dataset (Happy / Neutral / Sad).  
-The training script is named `RESNET50.py` but the current backbone is **EfficientNet-B0** — see [Model Version](#model-version) below.
+The training script is named `EFFICIENTNET_B0.py` but the current backbone is **EfficientNet-B0** — see [Model Version](#model-version) below.
 
 ---
 
@@ -43,13 +43,13 @@ Preserved in `resnet50_emotion.py` for reference.
 ## Project Structure
 
 ```
-RESNET50.py                  — Main training script (EfficientNet-B0)
+EFFICIENTNET_B0.py                  — Main training script (EfficientNet-B0)
 plot_curves.py               — Standalone training curve plotter (reads training_history.json)
 plot_confusion.py            — Standalone confusion matrix plotter (loads .pth model)
-resnet50_emotion.pth         — Saved model weights (EfficientNet-B0)
+efficientnet_b0_emotion.pth         — Saved model weights (EfficientNet-B0)
 training_history.json        — Per-epoch metrics from the latest training run
-training_curves_resnet50.png — Training curves plot (auto-generated)
-confusion_matrix_resnet50.png— Confusion matrix plot (auto-generated)
+training_curves_efficientnet_b0.png — Training curves plot (auto-generated)
+confusion_matrix_efficientnet_b0.png— Confusion matrix plot (auto-generated)
 resnet50_emotion.py          — Legacy TF/Keras ResNet-50 script (reference)
 improved_emotion_model.py    — EfficientNetV2S TF/Keras experiment
 optimized_emotion_model.py   — Earlier TF optimisation attempt
@@ -83,11 +83,11 @@ The dataset folder is excluded from this repo (`.gitignore`).
 
 ```bash
 source .venv/bin/activate
-python RESNET50.py
+python EFFICIENTNET_B0.py
 ```
 
 Outputs saved automatically after training:
-- `resnet50_emotion.pth`
+- `efficientnet_b0_emotion.pth`
 - `training_history.json`
-- `training_curves_resnet50.png`
-- `confusion_matrix_resnet50.png`
+- `training_curves_efficientnet_b0.png`
+- `confusion_matrix_efficientnet_b0.png`

@@ -36,6 +36,7 @@ Detect_Emotion_test_.ipynb
 improved_emotion_model.py
 optimized_emotion_model.py
 resnet50_emotion.py
+efficientnet_b0_emotion.py
 run_training.sh
 
 # Claude internal

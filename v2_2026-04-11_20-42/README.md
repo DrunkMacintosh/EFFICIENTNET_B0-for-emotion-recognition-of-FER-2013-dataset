@@ -49,13 +49,13 @@ Sad recall improved the most (+6.6%), which was the weakest class in v1. The sli
 ## Files
 
 ```
-RESNET50.py                   — Training script (v2)
-plot_curves.py                — Generates training_curves_resnet50.png
-plot_confusion.py             — Generates confusion_matrix_resnet50.png
-resnet50_emotion.pth          — Trained model weights
+EFFICIENTNET_B0.py                   — Training script (v2)
+plot_curves.py                — Generates training_curves_efficientnet_b0.png
+plot_confusion.py             — Generates confusion_matrix_efficientnet_b0.png
+efficientnet_b0_emotion.pth          — Trained model weights
 training_history.json         — Per-epoch metrics
-training_curves_resnet50.png  — Training curves
-confusion_matrix_resnet50.png — Confusion matrix
+training_curves_efficientnet_b0.png  — Training curves
+confusion_matrix_efficientnet_b0.png — Confusion matrix
 requirements.txt              — Python dependencies
 ```
 
@@ -70,7 +70,7 @@ pip install -r requirements.txt --index-url https://download.pytorch.org/whl/cu1
 ## Training
 
 ```bash
-python RESNET50.py
+python EFFICIENTNET_B0.py
 ```
 
-To retrain from scratch instead of resuming from v1, set `RESUME_FROM = None` at the top of `RESNET50.py`.
+To retrain from scratch instead of resuming from v1, set `RESUME_FROM = None` at the top of `EFFICIENTNET_B0.py`.

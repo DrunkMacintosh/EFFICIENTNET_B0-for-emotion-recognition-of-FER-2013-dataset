@@ -1,6 +1,6 @@
 """
 plot_confusion.py — Confusion matrix visualiser
-Loads resnet50_emotion.pth, rebuilds the same test split, runs inference,
+Loads efficientnet_b0_emotion.pth, rebuilds the same test split, runs inference,
 and saves a PNG.
 Usage: python plot_confusion.py
 """
@@ -19,8 +19,8 @@ from sklearn.metrics import confusion_matrix, classification_report
 import matplotlib.pyplot as plt
 from PIL import Image
 
-MODEL_FILE  = os.path.join(os.path.dirname(__file__), "resnet50_emotion.pth")
-OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "confusion_matrix_resnet50.png")
+MODEL_FILE  = os.path.join(os.path.dirname(__file__), "efficientnet_b0_emotion.pth")
+OUTPUT_FILE = os.path.join(os.path.dirname(__file__), "confusion_matrix_efficientnet_b0.png")
 DATA_DIR    = "/home/guest/bmax/imagemodel/dataset"
 CLASSES     = ["Happy", "Neutral", "Sad"]
 IMG_SIZE    = 96
@@ -131,7 +131,7 @@ def plot_cm(ax, cm, classes, normalize, title):
 cm = confusion_matrix(all_true, all_preds)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
-fig.suptitle(f"ResNet50 Confusion Matrix  |  Test acc: {acc:.2f}%", fontsize=12)
+fig.suptitle(f"EfficientNet-B0 Confusion Matrix  |  Test acc: {acc:.2f}%", fontsize=12)
 
 plot_cm(ax1, cm.copy(), CLASSES, normalize=False, title="Raw counts")
 plot_cm(ax2, cm.copy(), CLASSES, normalize=True,  title="Normalised (recall per class)")
