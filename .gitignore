@@ -29,6 +29,9 @@ training_curves.png
 venv/
 venv2/
 
+# Notebooks with embedded secrets / unrelated experiments
+fine_tune_gemma_4_E2B_on_emotions_final.ipynb
+
 # Claude internal
 .claude/
 
