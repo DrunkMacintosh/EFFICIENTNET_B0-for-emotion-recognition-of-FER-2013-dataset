@@ -1,6 +1,6 @@
-# ResNet-50 Emotion Recognition — FER-2013 & Balanced AffectNet Dataset
+# EfficientNet-B0 Emotion Recognition — FER-2013 & Balanced AffectNet Dataset
 
-Testing and fine-tuning of different ResNet-50 based models for emotion recognition on the FER-2013 and Balanced AffectNet datasets.
+Testing and fine-tuning of different EfficientNet-B0 based models for emotion recognition on the FER-2013 and Balanced AffectNet datasets.
 
 Each version folder contains the training script, model weights, plots, and metrics from that training run.
 

@@ -1,6 +1,6 @@
 """
 Emotion classifier — EfficientNet-B0 backbone
-Improvements over the original ResNet-50 script:
+Improvements over the original EfficientNet-B0 script:
   1. EfficientNet-B0 backbone (5M params vs 23M — less overfitting on 20K images)
   2. 96×96 grayscale input  (was 224×224 fake-RGB — 4.67× upscale caused blur)
   3. First conv adapted to 1 channel (pretrained weights averaged across RGB)

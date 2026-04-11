@@ -1,6 +1,6 @@
 """
 plot_curves.py — Training curve visualiser
-Reads training_history.json written by RESNET50.py and saves a PNG.
+Reads training_history.json written by EFFICIENTNET_B0.py and saves a PNG.
 Supports any number of training phases via the phase_starts field.
 Usage: python plot_curves.py
 """
@@ -16,7 +16,7 @@ OUTPUT_FILE  = os.path.join(os.path.dirname(__file__), "training_curves_efficien
 if not os.path.exists(HISTORY_FILE):
     raise FileNotFoundError(
         f"{HISTORY_FILE} not found.\n"
-        "Run RESNET50.py first to generate the training history."
+        "Run EFFICIENTNET_B0.py first to generate the training history."
     )
 
 with open(HISTORY_FILE) as f:
@@ -31,7 +31,7 @@ all_epochs = list(range(1, n_epochs + 1))
 
 phase_starts = h.get("phase_starts", [0])
 phase_labels = h.get("phase_labels", [f"Phase {i+1}" for i in range(len(phase_starts))])
-backbone     = h.get("backbone", "ResNet50")
+backbone     = h.get("backbone", "EfficientNet-B0")
 
 # ── Plot ──────────────────────────────────────────────────────────────────────
 PHASE_COLORS = ["#d0e8ff", "#d0ffd8", "#fff0d0"]   # blue / green / orange tints

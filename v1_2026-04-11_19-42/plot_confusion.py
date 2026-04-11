@@ -31,7 +31,7 @@ BATCH       = 64
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"Using device: {DEVICE}")
 
-# ── Rebuild the same test split (random_state=42 matches RESNET50.py) ─────────
+# ── Rebuild the same test split (random_state=42 matches EFFICIENTNET_B0.py) ─────────
 all_paths, all_labels = [], []
 for idx, cls in enumerate(CLASSES):
     paths = glob.glob(os.path.join(DATA_DIR, cls, "*.jpg"))
@@ -70,7 +70,7 @@ test_loader = DataLoader(EmotionDataset(test_paths, test_labels, eval_tf),
 # ── Load model ────────────────────────────────────────────────────────────────
 if not os.path.exists(MODEL_FILE):
     raise FileNotFoundError(
-        f"{MODEL_FILE} not found.\nRun RESNET50.py first to train and save the model."
+        f"{MODEL_FILE} not found.\nRun EFFICIENTNET_B0.py first to train and save the model."
     )
 
 model = models.efficientnet_b0(weights=None)
