@@ -1,6 +1,6 @@
-# EfficientNet-B0 Emotion Recognition — FER-2013 & Balanced AffectNet Dataset
+# EfficientNet-B0 Emotion Recognition — FER-2013, Balanced AffectNet & RAFDB
 
-Testing and fine-tuning of different EfficientNet-B0 based models for emotion recognition on the FER-2013 and Balanced AffectNet datasets.
+Testing and fine-tuning of different EfficientNet-B0 based models for emotion recognition on the FER-2013, Balanced AffectNet, and RAFDB datasets.
 
 Each version folder contains the training script, model weights, plots, and metrics from that training run.
 
@@ -16,3 +16,5 @@ Each version folder contains the training script, model weights, plots, and metr
 **FER-2013** — 48×48 grayscale facial expression images, 3 classes: **Happy**, **Neutral**, **Sad**.
 
 **Balanced AffectNet** — Higher resolution facial expression images with balanced class distribution.
+
+**RAFDB** (Real-world Affective Faces Database) — Real-world facial expression images collected from the internet, higher diversity than lab-collected datasets. Introduced from v3 onwards.
