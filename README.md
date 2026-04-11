@@ -62,8 +62,7 @@ optimized_emotion_model.py   — Earlier TF optimisation attempt
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
-pip install scikit-learn matplotlib pillow
+pip install -r requirements.txt --index-url https://download.pytorch.org/whl/cu128
 ```
 
 > Requires an NVIDIA GPU with CUDA 12.8+ (tested on RTX 5060 Ti).  
