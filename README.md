@@ -1,16 +1,18 @@
-# ResNet-50 Emotion Recognition — FER-2013
+# ResNet-50 Emotion Recognition — FER-2013 & Balanced AffectNet Dataset
 
-Testing and fine-tuning of different ResNet-50 based models for emotion recognition on the [FER-2013](https://www.kaggle.com/datasets/msambare/fer2013) dataset.
+Testing and fine-tuning of different ResNet-50 based models for emotion recognition on the FER-2013 and Balanced AffectNet datasets.
 
 Each version folder contains the training script, model weights, plots, and metrics from that training run.
 
 ## Versions
 
-| Folder | Backbone | Test Accuracy | Date |
-|---|---|---|---|
-| `v1_2026-04-11_19-42/` | EfficientNet-B0 | 71.85% | 2026-04-11 |
-| `v2_2026-04-11_20-42/` | EfficientNet-B0 + Focal Loss + Balanced Sampler | 73.80% | 2026-04-11 |
+| Folder | Backbone | Dataset | Test Accuracy | Date |
+|---|---|---|---|---|
+| `v1_2026-04-11_19-42/` | EfficientNet-B0 | FER-2013 | 71.85% | 2026-04-11 |
+| `v2_2026-04-11_20-42/` | EfficientNet-B0 + Focal Loss + Balanced Sampler | FER-2013 | 73.80% | 2026-04-11 |
 
-## Dataset
+## Datasets
 
-FER-2013 — 48×48 grayscale facial expression images, 3 classes: **Happy**, **Neutral**, **Sad**.
+**FER-2013** — 48×48 grayscale facial expression images, 3 classes: **Happy**, **Neutral**, **Sad**.
+
+**Balanced AffectNet** — Higher resolution facial expression images with balanced class distribution.
