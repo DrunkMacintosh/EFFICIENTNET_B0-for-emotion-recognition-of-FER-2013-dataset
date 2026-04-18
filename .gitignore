@@ -45,3 +45,4 @@ run_training.sh
 # OS
 .DS_Store
 Thumbs.db
+face_emotion.pth

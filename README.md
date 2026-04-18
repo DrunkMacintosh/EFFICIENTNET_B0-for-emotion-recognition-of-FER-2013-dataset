@@ -12,6 +12,7 @@ Each version folder contains the training script, model weights, plots, and metr
 | `v2_2026-04-11_20-42/` | EfficientNet-B0 + Focal Loss + Balanced Sampler | FER-2013 | 73.80% | 2026-04-11 |
 | `v3_2026-04-18_16-52/` | EfficientNet-B0 + Focal Loss + Balanced Sampler + RGB | FER-2013 + Balanced AffectNet + RAFDB | 76.00% | 2026-04-18 |
 | `v4_2026-04-18_17-21/` | EfficientNet-B0 + MixUp + Label Smoothing + EMA + Cosine LR | FER-2013 + Balanced AffectNet + RAFDB | 77.65% | 2026-04-18 |
+| `v5_2026-04-18_22-30/` | InceptionResNetV1 (VGGFace2 face-pretrained) | FER-2013 + Balanced AffectNet + RAFDB | 86.68% | 2026-04-18 |
 
 ## Datasets
 
