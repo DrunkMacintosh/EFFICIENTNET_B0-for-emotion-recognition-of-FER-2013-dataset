@@ -10,6 +10,7 @@ Each version folder contains the training script, model weights, plots, and metr
 |---|---|---|---|---|
 | `v1_2026-04-11_19-42/` | EfficientNet-B0 | FER-2013 | 71.85% | 2026-04-11 |
 | `v2_2026-04-11_20-42/` | EfficientNet-B0 + Focal Loss + Balanced Sampler | FER-2013 | 73.80% | 2026-04-11 |
+| `v3_2026-04-18_16-52/` | EfficientNet-B0 + Focal Loss + Balanced Sampler + RGB | FER-2013 + Balanced AffectNet + RAFDB | 76.00% | 2026-04-18 |
 
 ## Datasets
 

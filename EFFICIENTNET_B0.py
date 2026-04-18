@@ -1,10 +1,12 @@
 """
 Emotion classifier — EfficientNet-B0 backbone
-v2 improvements over v1:
-  1. Focal Loss (γ=2) — down-weights easy Happy examples, forces focus on hard Neutral/Sad
-  2. WeightedRandomSampler — every batch is class-balanced regardless of loss function
-  3. Checkpoint resume — loads v1 weights and continues fine-tuning (no wasted epochs)
-  4. Longer training + higher patience — model was still converging at end of v1
+v3 changes over v2:
+  1. Combined dataset: FER-2013 + Balanced AffectNet + RAFDB (~45K images)
+  2. RGB 3-channel input — mixed dataset formats (FER grayscale converted to RGB,
+     AffectNet/RAFDB are native RGB), standard ImageNet first-conv weights used as-is
+  3. Updated normalisation stats computed from the combined dataset
+  4. ColorJitter augmentation — meaningful now that real colour data is present
+  5. Full 3-phase training from scratch (v2 weights incompatible: 1ch → 3ch)
 """
 
 import os, glob, json, itertools, datetime
@@ -28,25 +30,31 @@ if DEVICE.type == "cuda":
     print(f"  GPU: {torch.cuda.get_device_name(0)}")
 
 # ── Config ────────────────────────────────────────────────────────────────────
-DATA_DIR     = "/home/guest/bmax/imagemodel/dataset"
-CLASSES      = ["Happy", "Neutral", "Sad"]
-IMG_SIZE     = 96
-BATCH        = 64
-MEAN, STD    = 0.4889, 0.2521
+DATA_DIR  = "/home/guest/bmax/imagemodel/dataset"
+CLASSES   = ["Happy", "Neutral", "Sad"]
+IMG_SIZE  = 96
+BATCH     = 64
 
-# Set to a .pth path to continue from a checkpoint instead of training from scratch.
-# Skips phases 1 & 2 and goes straight to full fine-tuning with the new loss.
-RESUME_FROM  = "v1_2026-04-11_19-42/efficientnet_b0_emotion.pth"
+# RGB normalisation stats computed from the combined dataset
+MEAN = [0.5236, 0.4614, 0.4363]
+STD  = [0.1362, 0.1296, 0.1387]
+
+# Train from scratch — v2 weights are incompatible (1-channel → 3-channel)
+RESUME_FROM = None
 
 # ── Collect paths + labels ────────────────────────────────────────────────────
 all_paths, all_labels = [], []
 for idx, cls in enumerate(CLASSES):
-    paths = glob.glob(os.path.join(DATA_DIR, cls, "*.jpg"))
+    paths = (
+        glob.glob(os.path.join(DATA_DIR, cls, "*.jpg")) +
+        glob.glob(os.path.join(DATA_DIR, cls, "*.jpeg")) +
+        glob.glob(os.path.join(DATA_DIR, cls, "*.png"))
+    )
     all_paths.extend(paths)
     all_labels.extend([idx] * len(paths))
     print(f"{cls}: {len(paths)}")
 
-# ── Split (same seed as v1 — identical test set for fair comparison) ──────────
+# ── Split ─────────────────────────────────────────────────────────────────────
 train_val_paths, test_paths, train_val_labels, test_labels = train_test_split(
     all_paths, all_labels, test_size=0.1, random_state=42, stratify=all_labels
 )
@@ -70,7 +78,7 @@ class EmotionDataset(Dataset):
         return len(self.paths)
 
     def __getitem__(self, idx):
-        img = Image.open(self.paths[idx]).convert("L")
+        img = Image.open(self.paths[idx]).convert("RGB")
         return self.transform(img), self.labels[idx]
 
 train_tf = transforms.Compose([
@@ -78,18 +86,18 @@ train_tf = transforms.Compose([
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(15),
     transforms.RandomAffine(degrees=0, translate=(0.1, 0.1), scale=(0.9, 1.1)),
+    transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.2),
     transforms.ToTensor(),
-    transforms.Normalize([MEAN], [STD]),
+    transforms.Normalize(MEAN, STD),
     transforms.RandomErasing(p=0.2, scale=(0.02, 0.15)),
 ])
 eval_tf = transforms.Compose([
     transforms.Resize((IMG_SIZE, IMG_SIZE)),
     transforms.ToTensor(),
-    transforms.Normalize([MEAN], [STD]),
+    transforms.Normalize(MEAN, STD),
 ])
 
-# WeightedRandomSampler — each batch drawn with equal class probability,
-# so Neutral and Sad are no longer under-represented in every batch.
+# WeightedRandomSampler — balanced batches regardless of dataset-level class counts
 sample_weights = torch.tensor([class_weights[l] for l in ytrain], dtype=torch.float32)
 sampler        = WeightedRandomSampler(sample_weights, num_samples=len(sample_weights),
                                        replacement=True)
@@ -104,36 +112,21 @@ test_loader  = DataLoader(EmotionDataset(test_paths,  test_labels, eval_tf),
 
 # ── Focal Loss ────────────────────────────────────────────────────────────────
 class FocalLoss(nn.Module):
-    """
-    FL(p) = -alpha * (1 - p)^gamma * log(p)
-    gamma=2 is the standard value from the original paper.
-    alpha=class_weights corrects for class imbalance on top of the focal term.
-    """
     def __init__(self, alpha=None, gamma=2.0):
         super().__init__()
-        self.alpha = alpha   # class weight tensor
+        self.alpha = alpha
         self.gamma = gamma
 
     def forward(self, inputs, targets):
         ce   = F.cross_entropy(inputs, targets, weight=self.alpha, reduction="none")
-        pt   = torch.exp(-ce)                        # probability of correct class
-        loss = (1 - pt) ** self.gamma * ce           # down-weight easy examples
+        pt   = torch.exp(-ce)
+        loss = (1 - pt) ** self.gamma * ce
         return loss.mean()
 
 # ── Model ─────────────────────────────────────────────────────────────────────
 model = models.efficientnet_b0(weights=models.EfficientNet_B0_Weights.IMAGENET1K_V1)
 
-first_conv = model.features[0][0]
-model.features[0][0] = nn.Conv2d(
-    1, first_conv.out_channels,
-    kernel_size=first_conv.kernel_size,
-    stride=first_conv.stride,
-    padding=first_conv.padding,
-    bias=False,
-)
-with torch.no_grad():
-    model.features[0][0].weight.copy_(first_conv.weight.mean(dim=1, keepdim=True))
-
+# Standard 3-channel input — no first-conv modification needed
 for p in model.parameters():
     p.requires_grad = False
 
@@ -219,49 +212,31 @@ def train_phase(model, optimizer, epochs, desc, patience=8):
     return history
 
 # ── Training ──────────────────────────────────────────────────────────────────
-if RESUME_FROM and os.path.exists(RESUME_FROM):
-    # ── Resume from checkpoint ────────────────────────────────────────────────
-    # Load v1 weights — skip phases 1 & 2, go straight to full fine-tuning
-    # with Focal Loss + WeightedRandomSampler to target Neutral and Sad.
-    print(f"\nResuming from {RESUME_FROM}")
-    model.load_state_dict(torch.load(RESUME_FROM, map_location=DEVICE))
+# Phase 1: head only
+for p in model.classifier.parameters():
+    p.requires_grad = True
+opt1  = torch.optim.AdamW(model.classifier.parameters(), lr=1e-3, weight_decay=1e-4)
+hist1 = train_phase(model, opt1, epochs=15, patience=5,
+                    desc="Phase 1: head only (backbone frozen)...")
 
-    unfreeze_last_n(model, 60)
-    opt = torch.optim.AdamW(filter(lambda p: p.requires_grad, model.parameters()),
-                             lr=5e-6, weight_decay=1e-4)
-    hist_resume = train_phase(model, opt, epochs=50,
-                              desc="Continued fine-tuning — Focal Loss + balanced sampler "
-                                   "(all 60 layers, lr=5e-6)...",
-                              patience=10)
+# Phase 2: unfreeze last 30 layers
+unfreeze_last_n(model, 30)
+opt2  = torch.optim.AdamW(filter(lambda p: p.requires_grad, model.parameters()),
+                           lr=1e-4, weight_decay=1e-4)
+hist2 = train_phase(model, opt2, epochs=30, patience=8,
+                    desc="Phase 2: fine-tuning last 30 layers...")
 
-    all_hists    = [hist_resume]
-    phase_starts = [0]
-    phase_labels = ["Focal fine-tune (from v1)"]
+# Phase 3: unfreeze last 60 layers
+unfreeze_last_n(model, 60)
+opt3  = torch.optim.AdamW(filter(lambda p: p.requires_grad, model.parameters()),
+                           lr=1e-5, weight_decay=1e-4)
+hist3 = train_phase(model, opt3, epochs=40, patience=10,
+                    desc="Phase 3: fine-tuning last 60 layers...")
 
-else:
-    # ── Full training from scratch ────────────────────────────────────────────
-    for p in model.classifier.parameters():
-        p.requires_grad = True
-    opt1  = torch.optim.AdamW(model.classifier.parameters(), lr=1e-3, weight_decay=1e-4)
-    hist1 = train_phase(model, opt1, epochs=15, patience=5,
-                        desc="Phase 1: head only (backbone frozen)...")
-
-    unfreeze_last_n(model, 30)
-    opt2  = torch.optim.AdamW(filter(lambda p: p.requires_grad, model.parameters()),
-                               lr=1e-4, weight_decay=1e-4)
-    hist2 = train_phase(model, opt2, epochs=30, patience=8,
-                        desc="Phase 2: fine-tuning last 30 layers...")
-
-    unfreeze_last_n(model, 60)
-    opt3  = torch.optim.AdamW(filter(lambda p: p.requires_grad, model.parameters()),
-                               lr=1e-5, weight_decay=1e-4)
-    hist3 = train_phase(model, opt3, epochs=40, patience=10,
-                        desc="Phase 3: fine-tuning last 60 layers...")
-
-    all_hists    = [hist1, hist2, hist3]
-    phase_starts = [0, len(hist1["train_loss"]),
-                    len(hist1["train_loss"]) + len(hist2["train_loss"])]
-    phase_labels = ["Head only", "Fine-tune 30", "Fine-tune 60"]
+all_hists    = [hist1, hist2, hist3]
+phase_starts = [0, len(hist1["train_loss"]),
+                len(hist1["train_loss"]) + len(hist2["train_loss"])]
+phase_labels = ["Head only", "Fine-tune 30", "Fine-tune 60"]
 
 # ── Evaluate ──────────────────────────────────────────────────────────────────
 model.eval()
