@@ -13,8 +13,8 @@ Same script as v6 with `RESUME_FROM` pointing to the v6 checkpoint.
 |---|---|
 | Starting point | v6 checkpoint (87.25%) |
 | LR | 5e-6 |
-| Epochs | 22 (early stopped) |
-| Best val acc | 88.3% |
+| Epochs | 40 |
+| Best val acc | 88.6% |
 | Augmentation | CutMix + MixUp (50/50) |
 | TTA | Yes (original + h-flip) |
 
@@ -26,7 +26,7 @@ Same script as v6 with `RESUME_FROM` pointing to the v6 checkpoint.
 |---|---|
 | v5 | 86.68% |
 | v6 | 87.25% |
-| **v7** | **87.77%** |
+| **v7** | **88.12%** |
 
 ---
 
