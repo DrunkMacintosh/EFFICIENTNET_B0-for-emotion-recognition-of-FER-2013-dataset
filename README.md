@@ -14,6 +14,7 @@ Each version folder contains the training script, model weights, plots, and metr
 | `v4_2026-04-18_17-21/` | EfficientNet-B0 + MixUp + Label Smoothing + EMA + Cosine LR | FER-2013 + Balanced AffectNet + RAFDB | 77.65% | 2026-04-18 |
 | `v5_2026-04-18_22-30/` | InceptionResNetV1 (VGGFace2 face-pretrained) | FER-2013 + Balanced AffectNet + RAFDB | 86.68% | 2026-04-18 |
 | `v6_2026-04-19_00-12/` | InceptionResNetV1 + CutMix + TTA (fine-tuned from v5) | FER-2013 + Balanced AffectNet + RAFDB | 87.25% | 2026-04-19 |
+| `v7_2026-04-30_20-28/` | InceptionResNetV1 + CutMix + TTA (fine-tuned from v6) | FER-2013 + Balanced AffectNet + RAFDB | 87.77% | 2026-04-30 |
 
 ## Datasets
 
